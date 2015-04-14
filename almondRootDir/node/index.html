@@ -23,6 +23,15 @@
       var expanded = [];
       var socket = io();
 
+      var d = new Date();
+      window.start = d.getTime();
+
+      socket.on('connect',function(msg){
+        var d = new Date();
+        var end = d.getTime()
+        console.log('finally', msg, end - window.start)
+      })
+
       function clickedOn(index){
         expanded[index] = !expanded[index];
         updatePage();
@@ -64,7 +73,7 @@
           }
       }
  
-      socket.on('feedback', function(devices){
+      socket.on('deviceChange', function(devices){
         updater++;
         updatePage(devices);
         $('#updateCounter').html("updates: "+updater);

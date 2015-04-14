@@ -107,31 +107,32 @@ $(function() {
   // Only fetch non-debug collections
   window.Collections = {
     devices: window.Devices, 
-    rules: window.Rules, 
-    triggerGroups: window.TriggerGroups, 
-    triggers: window.Triggers, 
-    results: window.Results
+    // rules: window.Rules, 
+    // triggerGroups: window.TriggerGroups, 
+    // triggers: window.Triggers, 
+    // results: window.Results
   };
-  
+
   if (!DEBUG) {
     var waitingOn = Object.keys(Collections).length;
-    var start = function() {
+    var start = function(collection, data, options) {
       waitingOn = waitingOn - 1;
       // console.log("Waiting on", waitingOn);
       if (waitingOn == 0) {
         Backbone.history.start();
-         // console.log("Started router", router);
+        // console.log("Started router", router);
       }
     }
-
     for (var col in Collections) {
       if (Collections[col].size() == 0) {
         Collections[col].fetch({
-          success: start
+          success: start,
+          failure: start
         });
       }
     }
   } else {
+
     Backbone.history.start();
   }
 

@@ -1,5 +1,29 @@
 <link href="/nui/css/devices.css" rel="stylesheet" type="text/css">
 
+<% 
+	if (wsFail){
+%>
+
+<div class='wsFailWrapper'>
+	<div class='wsFail'>
+		<div class='wsFailIconWrapper'>
+			<img class='wsFailIcon' src="/nui/sensorimg/firewarning.png"></img>
+		</div>
+		<h3 class='wsFailHeader'>
+			I feel there is a great disturbance in the Force.
+		</h3>
+		<p class='wsFailMessage'>
+			Your socket connection to the router seems to have disconnected, try refreshing the page to get it working again
+		</p>
+	</div>
+</div>
+
+<%
+	}
+%>
+
+
+
 <div id='devicesWrapper' class="devicesWrapper boxView">
 	<div class='noDeviceWrapper'>
 		<div class='noDeviceError'>

@@ -3,7 +3,6 @@ var DeviceCollection = CollectionWS.extend({
   url: 'devices',
   model: DeviceModel,
   initialize: function(){
-    this.deviceDict = window.Luci.loadJson("deviceTypeDict");
   },
 
   sortModelsByAttr: function(attr){
@@ -24,7 +23,16 @@ var DeviceCollection = CollectionWS.extend({
   },
 
   getDevices: function(){
-    return this.sortModelsByAttr('_index')
+    return this.models
+  },
+
+  getByAttr: function(attr, attrValue){
+    for ( var i = 0; i < this.models.length; i++){
+      var model = this.models[i];
+      var modelAttrValue = model.getAttr(attr);
+      if(modelAttrValue == attrValue)
+        return model;
+    }
   },
 
   getDeviceTypes: function(){
@@ -49,6 +57,68 @@ var ValueCollection = NestedCollection.extend({
   initialize: function(){
   },
 
+  sortModelsByAttr: function(sortObj){
+
+    var attr = sortObj.attr;
+    var ascDesc = sortObj.ascDesc;
+    var models = sortObj.models;
+
+    if( models == undefined )
+      models = this.models;
+
+    var valueObjs = [];
+    for(var i = 0; i < models.length; i++){
+      value = models[i];
+      valueObj = {};
+      valueObj['model'] = value;
+      valueObj[attr] = value.getAttr(attr);
+      valueObjs.push(valueObj);
+    }
+
+    valueObjs.sort(function(a,b){
+      if(ascDesc == 1){
+        return a[attr] - b[attr];
+      }
+      else
+        return b[attr] - a[attr];
+    })
+
+    return valueObjs.map(function(obj){return obj.model});
+  },
+
+  getShownValues: function(){
+    var shownValues = [];
+
+    for(var i = 0; i < this.models.length; i++){
+      var model = this.models[i]
+      if( !model.getAttr('hidden') ){
+        shownValues.push(model)
+      }
+    }
+
+    return shownValues;
+  },
+
+  getDisplayValues: function(){
+    var shownValues = this.getShownValues();
+    var displayValues = [];
+
+    for(var i = 0; i < shownValues.length; i++){
+      var shownValue = shownValues[i]
+      
+      if( shownValue.getAttr('display') > 0 ){
+        displayValues.push(shownValue)
+      }
+    }
+    var sortedDisplay = this.sortModelsByAttr({
+      attr: 'display',
+      ascDesc: 1,
+      models: displayValues
+    })
+
+    return sortedDisplay;
+  },
+
   getInfoList: function(){
     var values = this.models
     var infoArray = []
@@ -58,11 +128,30 @@ var ValueCollection = NestedCollection.extend({
     }
     return infoArray
   },
+
+  getByAttr: function(attr, attrValue){
+    for ( var i = 0; i < this.models.length; i++){
+      var model = this.models[i];
+      var modelAttrValue = model.getAttr(attr);
+      if(modelAttrValue == attrValue)
+        return model;
+    }
+  },
 })
 
-var AttrCollection = NestedCollection.extend({
+var AttrCollection = CollectionWS.extend({
+  url:'attrs',
   model: AttrModel,
-  initialize: function(){
+  initialize: function(data){
+  },
+
+  getByKey: function(attrKey){
+    var attrs = this.models;
+    for( var i = 0; i < attrs.length; i++){
+      var attr = attrs[i];
+      if (attr.get('key') == attrKey)
+        return attr;
+    }
   },
 
   getValue: function(id){

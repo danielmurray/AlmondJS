@@ -67,7 +67,6 @@ var HomeView = BaseView.extend({
     } else {
       viewToBeReturned = new TabView(this.currentTab)
     }
-    console.log(viewToBeReturned)
 
     return {
       "#contentContainer": viewToBeReturned
@@ -100,7 +99,6 @@ var HomeView = BaseView.extend({
 var TabView = BaseView.extend({
   el: 'div',
   initialize: function(data){
-    this.template = window.Luci.loadBackboneTemplate("nothingfound");
   },
   route: function(part, remaining) {
 
@@ -145,7 +143,7 @@ var DevicesView = TabView.extend({
     if (viewMap[part]){
       viewToBeReturned = new viewMap[part]();
     } else {
-      viewToBeReturned = new viewMap['list' ]();
+      viewToBeReturned = new viewMap['list']();
     }
 
     return {
@@ -155,7 +153,8 @@ var DevicesView = TabView.extend({
   },
   render: function() {
     var renderedTemplate = this.template({
-      devicesView: this.devicesView
+      devicesView: this.devicesView,
+      wsFail: this.collection.wsFail
     });
     this.$el.html(renderedTemplate);
   },
@@ -165,118 +164,18 @@ var DevicesView = TabView.extend({
 var DeviceListView = BaseView.extend({
   el: 'div',
   events: {
-    "mousemove  .expandCollapseOverlay": "mouseMove",
-    "mouseout   .expandCollapseOverlay": "mouseOut",
-    "click      .expandCollapseOverlay": "expandCollapse",
-    "click      #listToBoxButton"      : "listToBox",
-    "click      #boxToListButton"      : "boxToList"
-  },
-  boxToList: function(click){
-    this.deviceView = "list"
-
-    var deviceElems = this.$el.find(".item")
-    for( var i = 0; i < deviceElems.length; i++){
-      var deviceElem = deviceElems[i]
-      var deviceContent = $(deviceElem).find('.item-content')
-      var classes = deviceContent[0].classList
-      deviceContent.addClass('w12')
-    }
-    
-    this.container.packery();
-
-    var deviceElems = this.$el.removeClass('boxView')
-    var deviceElems = this.$el.addClass('listView')
-  },
-  listToBox: function(click){
-    this.deviceView = "box"
-
-    var deviceElems = this.$el.find(".item")
-    for( var i = 0; i < deviceElems.length; i++){
-      var deviceElem = deviceElems[i]
-      var deviceContent = $(deviceElem).find('.item-content')
-      deviceContent.removeClass('w12')
-    }
-
-    this.container.packery();
-
-    var deviceElems = this.$el.removeClass('listView')
-    var deviceElems = this.$el.addClass('boxView')
-  },
-  getMouseXY: function(event){
-    var mouseX, mouseY
-
-    if(event.offsetX == undefined){
-      mouseX = event.originalEvent.layerX
-      mouseY = event.originalEvent.layerY
-    }else{
-      mouseX = event.offsetX
-      mouseY = event.offsetY
-    }
-
-    return [mouseX, mouseY]
-  },
-  expandCollapse: function(event){
-    var mouseXY = this.getMouseXY(event)
-    var mouseX = mouseXY[0]
-    var mouseY = mouseXY[1]
-
-    var elem = $(event.target).closest('.item');
-    var elemContent = elem.find('.item-content');
-    var elemContent = elem.find('.item-content');
-
-
-    var horizontalVertical = this.horizontalVertical(elem, mouseX, mouseY)
-    var heightWidth = this.heightWidth(elem, mouseX, mouseY)
-    var currDimension = elem.attr(heightWidth)
-    var nextDimension = this.oppositeDimension(elem, currDimension)
-
-    elem.attr(heightWidth, nextDimension)
-    elemContent.switchClass(currDimension,nextDimension,0)
-    this.updateArrows(elem, horizontalVertical, currDimension, nextDimension)
-
-    var deviceId = elem.attr('deviceId')
-    var device = this.collection.get(deviceId)
-
-    setObj = {}
-    setObj['_'+heightWidth] = nextDimension
-    device.setAttr(setObj)
-    this.collection.save()
-
-    this.container.packery( 'fit', elem[0] );
-  },
-  mouseMove: function(event){
-    var mouseXY = this.getMouseXY(event)
-    var mouseX = mouseXY[0]
-    var mouseY = mouseXY[1]
-
-    var elem = $(event.target).closest('.item');
-
-    switch( this.horizontalVertical(elem, mouseX, mouseY) ){
-      case'horizontal':
-      //show horizontal expandCollapse arrow
-        elem.find('.expandCollapse.horizontal').addClass('show', {duration:200});
-        elem.find('.expandCollapse.vertical').removeClass('show', {duration:200});
-        break;
-      case'vertical':
-      //show vertical expandCollapse arrow
-        elem.find('.expandCollapse.horizontal').removeClass('show', {duration:200});
-        elem.find('.expandCollapse.vertical').addClass('show', {duration:200});
-        break;
-    }
-
-  },
-  mouseOut: function(event){
-    var elem = $(event.currentTarget);
-    var deviceId = elem.attr('deviceId')
-    elem.find('.expandCollapse').removeClass('show', {duration:200});
+    // "mousemove  .expandCollapseOverlay": "mouseMove",
+    // "mouseout   .expandCollapseOverlay": "mouseOut",
+    // "click      .expandCollapseOverlay": "expandCollapse",
+    // "click      #listToBoxButton"      : "listToBox",
+    // "click      #boxToListButton"      : "boxToList"
   },
   initialize: function(data){
     this.collection = window.Devices;
     this.devices = this.collection.getDevices();
-    this.deviceView = "box"
-
 
     this.template = window.Luci.loadBackboneTemplate("deviceList");
+    
   },
   route: function(part, remaining) {
 
@@ -284,9 +183,11 @@ var DeviceListView = BaseView.extend({
 
     for(var i = 0; i < this.devices.length; i++){
       device = this.devices[i]
-      deviceItemDivID = '#device'+device.id
+      deviceItemDivID = '#device'+device.getAttr('id')
       listView = new DeviceView(device)
       viewsToBeReturned[deviceItemDivID] = listView
+
+      listView.on('settings', this.settings)
     }
 
     return viewsToBeReturned;  
@@ -294,21 +195,21 @@ var DeviceListView = BaseView.extend({
   },
   render: function() {    
     var renderedTemplate = this.template({
-      devices     : this.devices,
-      showArrows  : this.showArrows,
+      devices     : this.devices
     });
     this.$el.html(renderedTemplate);
-    setTimeout($.proxy(this.initBoxes), 1000, this);
+    setTimeout($.proxy(this.initBoxes), 100, this);
   },
   initBoxes: function(self){
+
     var container = $('#deviceList');
     container.packery({
-      columnWidth: 158,
-      rowHeight: 158,
+      columnWidth: 192,
+      rowHeight: 240,
       gutter: 10,
       transitionDuration: '0.5s'
     });
-
+    
     // get item elements, jQuery-ify them
     var $itemElems = $( container.packery('getItemElements') );
     // make item elements draggable
@@ -320,106 +221,79 @@ var DeviceListView = BaseView.extend({
 
     self.container = container
 
-    function updateDeviceIndices(layout, items) {
-      var elems = container.packery('getItemElements')
-      for(var i = 0; i < elems.length; i++){
-        item = elems[i]
-        elem = $(item)
-        device.id = elem.attr('deviceId')
-        device = self.collection.get(device.id)
-
-        device.setAttr({
-          _index: i
-        })
-      }
-      self.collection.save()
-    }
-
-    // container.packery( 'on', 'layoutComplete', updateUserDevicePreferences, this )
-    container.packery( 'on', 'dragItemPositioned', updateDeviceIndices, self )
   },
-  updateArrows: function(elem, horizontalVertical, currDimension, nextDimension){
-    var wrapper = elem.find('.expandCollapse.' + horizontalVertical)
-    var expandArrow = wrapper.find('.expand')
-    var collapseArrow = wrapper.find('.collapse')
-    if( currDimension < nextDimension){
-  // collapse
-      expandArrow.removeClass('show', {duration:200});
-      collapseArrow.addClass('show', {duration:200});
-    }else{
-  // expand
-      expandArrow.addClass('show', {duration:200});
-      collapseArrow.removeClass('show', {duration:200});
-    }
-  },
-  heightWidth: function(elem, mouseX, mouseY){
-    switch( this.horizontalVertical(elem, mouseX, mouseY) ){
-      case 'vertical':
-        return 'height'
-      case 'horizontal':
-        return 'width'
-    }
-  },
-  horizontalVertical: function(elem, mouseX, mouseY){
-    var deviceId = elem.attr('deviceId')
-    var device = this.collection.get(deviceId)
-    if(this.dimensionExpanded(device,'height') || this.deviceView=='list' || this.dimensionExpanded(device,'width') && mouseX < mouseY){
-        return 'vertical'
-    }else{
-        return 'horizontal'
-    }
-  },
-  oppositeDimension: function(elem, nowDimension){
-    var id = elem.attr('deviceId')
-    var device = this.collection.get(id)
-    var widthHeight = nowDimension[0]
-    switch( widthHeight ){
-      case 'w':
-        if (nowDimension == 'w2')
-          return device.getAttr('_maxWidth')
-        else
-          return 'w2'
-      case 'h':
-        if (nowDimension == 'h2')
-          return device.getAttr('_maxHeight')
-        else
-          return 'h2'
-    }
-  },
-  dimensionExpanded: function(device, dimension){
-    var dimension = device.getAttr('_' + dimension)
-    if( dimension[1] == '2' )
-      return false
-    else
-      return true
-  },
-  showArrows: function(device){
-    var doWeShowIt = function(device, dimension){
-      var dimension = device.getAttr('_' + dimension)
-      if( dimension[1] == '2' ){
-        return {
-          expand    :'show',
-          collapse  :''
-        }
-      }else{
-        return {
-          expand    :'',
-          collapse  :'show'
-        }
-      }
-    }
-    return {
-      horizontal  :doWeShowIt(device,'width'),
-      vertical    :doWeShowIt(device,'height')
-    }
+  settings: function(device){
+    console.log(device.get('id'))
+    
   }
 });
 
 var DeviceView = BaseView.extend({
   el: 'div',
-  events: {
+  events: function(){
+    if(window.MOBILE){
+      //Mobile
+      return {
+        "tap  .deviceIcon"      : "tap",
+        "tap  .ellipsesWrapper" : "settings",
+      }
+    } else {
+      //Desktop
+      return {
+        "mousedown  .deviceIconWrapper"      : "clickStart",
+        "mousemove  .deviceIconWrapper"      : "clickMove",
+        "mouseup    .deviceIconWrapper"      : "clickEnd",
+        "click      .ellipsesWrapper"        : "settings"
+      }
+    }
+  },
+  tap:function(event){
+    console.log('tap');
+    this.click(event)
+  },
+  settings:function(event){
+    this.trigger("settings", this.model);
+  },
+  clickStart: function(event){
+    switch (event.which) {
+      case 1:
+      case 2:
+        this.clickDrag = 'click'; 
+        break;
+      case 3:
+        //right click
+        break;
+      default:
+        console.log('You have a strange Mouse!');
+    }
+  },
+  clickMove: function(event){
+    this.clickDrag = 'drag';    
+  },
+  clickEnd: function(event){
+    switch (event.which) {
+      case 1:
+      case 2:
+        if(this.clickDrag == 'click'){
+          // console.log('left click')
+          this.click(event)
+        }else if(this.clickDrag == 'drag'){
+          // console.log('drag')
+          // alert('drag')
+        }
+        break;
+      case 3:
+        // console.log('right click')
+        break;
+      default:
+        console.log('You have a strange Mouse!');
+    }
+  },
+  click: function(event){
+    this.model.toggle();
   },
   initialize: function(device){
+
     this.template = window.Luci.loadBackboneTemplate("device");
     this.model = device;
   },
@@ -427,29 +301,8 @@ var DeviceView = BaseView.extend({
     
     var viewsToBeReturned = {};
     viewsToBeReturned['#device'+this.model.id+'icon'] = new DeviceIconView(this.model);
-    viewsToBeReturned['#device'+this.model.id+'info'] = new DeviceInfoView(this.model);
-    
-    var displayValueIndices = this.model.getAttr('_displayValues')
 
-    for(var i = 0; i < displayValueIndices.length; i++){
-      var displayValueIndex = displayValueIndices[i];
-      var valueModel = this.model.getValue(displayValueIndex);
-
-      var valueType = valueModel.getAttr('_type');
-      switch( valueType ){
-        case 'switch':
-          var valueView = new SwitchDisplayView(this.model, valueModel);
-          break;
-        case 'number':
-        case 'bool':
-          var valueView = new NumberDisplayView(this.model, valueModel);
-      }
-      
-      var valueItemDivID = '#device'+this.model.id+'value'+displayValueIndex;
-      viewsToBeReturned[valueItemDivID] = valueView;
-    }
     return viewsToBeReturned;   
-    
   },
   render: function() {
     var renderedTemplate = this.template({
@@ -463,8 +316,7 @@ var DeviceView = BaseView.extend({
 
 var DeviceIconView = BaseView.extend({
   el: 'div',
-  events:{
-    
+  events: {
   },
   initialize: function(device){
     var that = this;
@@ -474,6 +326,7 @@ var DeviceIconView = BaseView.extend({
   route: function(part, remaining) {
     this.listenTo(this.model,'change',this.render)
 
+
     return {
       //"#dashboard-wrapper": viewToBeReturned
     };    
@@ -481,6 +334,11 @@ var DeviceIconView = BaseView.extend({
     
   },
   render: function() {
+    var value = undefined;
+
+    if(this.model.getValueByAttr('index', 2))
+      var value = this.model.getValueByAttr('index', 2).getAttr('value')
+
     var renderedTemplate = this.template({
       device :this.model,
     });
@@ -652,7 +510,6 @@ var RulesView = TabView.extend({
       part: this.nextPart,
       deviceTypes: this.deviceTypes
     });
-    console.log(renderedTemplate)
     this.$el.html(renderedTemplate);
   },
   toggle: function(click) {

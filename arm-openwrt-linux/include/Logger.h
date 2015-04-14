@@ -1,0 +1,86 @@
+/* 
+ * File:   Logger.h
+ * Author: ashutosh
+ *
+ * Created on 15 July, 2013, 1:08 PM
+ */
+
+#ifndef LOGGER_H
+#define	LOGGER_H
+
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <string.h>
+#define FILENAME_MAX_SIZE 100
+#if defined(NoLogs)
+#define LOG(a, b) 
+#define LOGINFO(a)
+#else
+#define LOG(a, b) logger->Log((a), (b))
+#if defined(DisableInfoLogs)
+#define LOGINFO(a) //logger->Log(Logger::INFO, (a))
+#else
+#define LOGINFO(a) logger->Log(Logger::INFO, (a))
+#endif
+#endif
+
+
+#define LOG_LOW_WATER_MARK 100*1024
+#define LOG_HIGH_WATER_MARK 1024*1024
+
+#define APP_EX_LOG "clouddata"
+#define APP_ID_LOG "a019"
+
+/**
+ * Class Logger is used by the Almond daemon for logging events. 
+ * The caller has the ability to call it at various severity levels and define
+ * how the log events will be shown.
+ * 
+ */
+class Logger {
+public:
+
+    enum LogMethods {
+        LOGFILE, CONSOLE, NONE
+    };
+
+    enum Severity {
+        INFO, WARN, ERROR, PRINT, CRITICAL, ALL = 100
+    };
+    char SeverityString[6][20]; // = {"INFO", "WARN", "ERROR", "CRITICAL", 0};
+    static Logger* getInstance();
+
+    virtual ~Logger();
+    void setMethod(int severity, int method);
+    void Log(int severity, const char* eventString);
+
+    void persistLog();
+
+    void setFileName(char*);
+
+
+private:
+
+    static Logger *singletonInstance; //The singleton instance of Logger to be used by all users of this class
+    Logger();
+    Logger(const Logger& orig);
+
+    void Persistence(char* app_id, char* app_ex);
+    void persist(char* volatileLocation, char* filename);
+    void depersist(char* filename);
+    void copyFile(char* persistentFile, char* location);
+
+
+    int LogMap[5]; //Stores a map of how a particular severity event is to be shown.
+    char filename[FILENAME_MAX_SIZE];
+
+    char persistDir[150];
+
+};
+
+#endif	/* LOGGER_H */
+

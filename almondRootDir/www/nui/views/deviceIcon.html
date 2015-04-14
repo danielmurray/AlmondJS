@@ -1,8 +1,7 @@
 <% 
-	var deviceID = device.id
-	var statusObj = device.getAttr('_status')
-	var displayValueIndices = device.getAttr('_displayValues')
-	var color = device.getColor()
+	var deviceID = device.getAttr('id');
+	var stateObj = device.getState();
+	var color = device.getColor();
 %>
 
 <style>
@@ -10,17 +9,17 @@
 	    background-color    :<%= color %>;
 	    color               :<%= color %>;
 	}
-
-	#device<%=deviceID%> .deviceIcon{
-	    background-color    :<%= color %>;
-	    color               :<%= color %>;
-	}
 </style>
 
 <div class='deviceIcon'>
-	<div class="iconSprite icon_<%=statusObj.icon%>">
-	</div>
+	<img class="iconSprite icon_<%=stateObj.icon%>" src="/nui/sensorimg/<%=stateObj.icon%>.png"></img>
+</div>
+
+<div class="deviceFooter">
 	<div class="deviceName">
 		<%= device.getAttr('name') %>
+	</div>
+	<div class="deviceLocation">
+		<%= device.getAttr('location') %>
 	</div>
 </div>

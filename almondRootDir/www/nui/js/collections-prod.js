@@ -7,4 +7,3 @@ window.Rules = new RuleCollection();
 window.TriggerGroups = new TriggerGroupCollection();
 window.Triggers = new TriggerCollection();
 window.Results = new ResultCollection()
-

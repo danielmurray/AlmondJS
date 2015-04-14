@@ -25,8 +25,6 @@ var NestedModel = Backbone.Model.extend({
         this.set(key, attributeData)
       }
     }
-    this.trigger('change')
-
   },
 
 });

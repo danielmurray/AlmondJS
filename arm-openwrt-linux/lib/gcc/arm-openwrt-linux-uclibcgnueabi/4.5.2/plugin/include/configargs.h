@@ -1,0 +1,7 @@
+/* Generated automatically. */
+static const char configuration_arguments[] = "/home/buildserver/coconut/openwrt-2.4.2011-trunk/build_dir/toolchain-arm_gcc-4.5.1+l_uClibc-0.9.32_eabi/gcc-linaro-4.5-2010.12-0/configure --prefix=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/toolchain-arm_gcc-4.5.1+l_uClibc-0.9.32_eabi --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-uclibcgnueabi --with-gnu-ld --enable-target-optspace --disable-libgomp --disable-libmudflap --disable-multilib --disable-nls --with-gmp=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --with-mpfr=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --disable-decimal-float --with-gmp=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --with-mpc=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --with-mpfr=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --disable-decimal-float --disable-libssp --disable-__cxa_atexit --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/toolchain-arm_gcc-4.5.1+l_uClibc-0.9.32_eabi/lib --enable-lto --with-libelf=/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/host --disable-tls";
+static const char thread_model[] = "posix";
+
+static const struct {
+  const char *name, *value;
+} configure_default_options[] = { { NULL, NULL} };

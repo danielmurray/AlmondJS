@@ -1,12 +1,9 @@
 <% 
-	var deviceID = device.id
+	var deviceID = device.getAttr('id')
 	var color = device.getColor()
 %>
 
 <style>
-	#device<%=deviceID%> .infoWrapper{
-	    border-left: solid 16px <%= color %>;
-	}
 
 	#device<%=deviceID%> .infoItem{
 	    background-color    :<%= color %>;

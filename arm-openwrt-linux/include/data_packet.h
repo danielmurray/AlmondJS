@@ -1,0 +1,1080 @@
+/* 
+ * File:   data_packet.h
+ * Author: santosh
+ *
+ * Created on 20 June, 2013, 11:58 AM
+ */
+
+#ifndef DATA_PACKET_H
+#define	DATA_PACKET_H
+
+#ifndef __GCC_H__
+
+typedef unsigned char boolean;
+typedef unsigned char int8u;
+typedef signed char int8s;
+typedef unsigned short int16u;
+typedef signed short int16s;
+typedef unsigned int int32u;
+typedef signed int int32s;
+typedef unsigned long long int64u;
+typedef signed long long int64s;
+typedef unsigned long PointerType;
+
+#define SIGNED_ENUM
+
+#endif
+
+#ifdef OZW
+/************************************************************************************/
+/*
+*#defines for Command classes
+*
+*/
+#define NO_OPERATION				0x00
+#define BASIC					0x20
+#define CONTROLLER_REPLICATION			0x21
+#define APPLICATION_STATUS			0x22
+#define	ZIP_SERVICES				0x23
+#define ZIP_SERVER				0x24
+#define SWITCH_BINARY				0x25
+#define SWITCH_MULTILEVEL			0x26
+#define SWITCH_ALL				0x27
+#define SWITCH_TOGGLE_BINARY			0x28
+#define SWITCH_TOGGLE_MULTILEVEL		0x29
+#define CHIMNEY_FAN				0x2A
+#define SCENE_ACTIVATION			0x2B
+#define SCENE_ACTUATOR_CONF			0x2C
+#define SCENE_CONTROLLER_CONF			0x2D
+#define ZIP_CLIENT				0x2E
+#define ZIP_ADV_SERVICES			0x2F
+#define SENSOR_BINARY				0x30
+#define SENSOR_MULTILEVEL 			0x31
+#define METER 					0x32
+#define ZIP_ADV_SERVER 				0x33
+#define ZIP_ADV_CLIENT 				0x34
+#define METER_PULSE 				0x35
+#define THERMOSTAT_HEATING 			0x38
+#define THERMOSTAT_MODE 			0x40
+#define THERMOSTAT_OPERATING_STATE 		0x42
+#define THERMOSTAT_SETPOINT 			0x43
+#define THERMOSTAT_FAN_MODE 			0x44
+#define THERMOSTAT_FAN_STATE 			0x45
+#define CLIMATE_CONTROL_SCHEDULE 		0x46
+#define THERMOSTAT_SETBACK 			0x47
+#define DOOR_LOCK_LOGGING 			0x4C
+#define SCHEDULE_ENTRY_LOCK 			0x4E
+#define BASIC_WINDOW_COVERING 			0x50
+#define MTP_WINDOW_COVERING 			0x51
+#define MULTI_INSTANCE 				0x60
+#define DOOR_LOCK 				0x62
+#define USER_CODE 				0x63
+#define CONFIGURATION 				0x70
+#define ALARM 					0x71
+#define MANUFACTURE_SPECIFIC 			0x72
+#define POWERLEVEL 				0x73
+#define PROTECTION 				0x75
+#define LOCK 					0x76
+#define NODE_NAMING 				0x77
+#define FIRMWARE_UPDATE_MD 			0x7A
+#define GROUPING_NAME 				0x7B
+#define REMOTE_ASSOCIATION_ACTIVATE 		0x7C
+#define REMOTE_ASSOCIATION 			0x7D
+#define BATTERY 				0x80
+#define CLOCK 					0x81
+#define HAIL 					0x82
+#define WAKE_UP 				0x84
+#define ASSOCIATION 				0x85
+#define VERSION 				0x86
+#define INDICATOR 				0x87
+#define PROPRIETARY 				0x88
+#define LANGUAGE 				0x89
+#define TIME 					0x8A
+#define TIME_PARAMETERS 			0x8B
+#define GEOGRAPHIC_LOCATION 			0x8C
+#define COMPOSITE 				0x8D
+#define MULTI_INSTANCE_ASSOCIATION 		0x8E
+#define MULTI_CMD 				0x8F
+#define ENERGY_PRODUCTION 			0x90
+#define MANUFACTURER_PROPRIETARY 		0x91
+#define SCREEN_MD 				0x92
+#define SCREEN_ATTRIBUTES 			0x93
+#define SIMPLE_AV_CONTROL 			0x94
+#define AV_CONTENT_DIRECTORY_MD 		0x95
+#define AV_RENDERER_STATUS 			0x96
+#define AV_CONTENT_SEARCH_MD 			0x97
+#define SECURITY 				0x98
+#define AV_TAGGING_MD 				0x99
+#define IP_CONFIGURATION 			0x9A
+#define ASSOCIATION_COMMAND_CONFIGURATION 	0x9B
+#define SENSOR_ALARM 				0x9C
+#define SILENCE_ALARM 				0x9D
+#define SENSOR_CONFIGURATION 			0x9E
+#define MARK 					0xEF
+#define NON_INTEROPERABLE 			0xF0
+
+
+
+/***************************************end of cmd classes*********************************************/
+
+
+
+/** 
+ * Operation codes.
+ */
+enum ozw_OperationCode {
+    Code_None = 0,
+    Code_ControllerCommandOperation = 1, /**< Controller commands like Add node operations */ //FROM CLIENT
+    Code_SetValueOperation, /**< Setting Node command class values operations with CommandClass & CommandClassIndex variables */ //FROM CLIENT
+    Code_GetValueOperation, /**< Getting Node command class values operations with CommandClass & CommandClassIndex variables */ //FROM CLIENT
+    Code_CancelCommandOperation, /**< Cancelling controller command operation */ //FROM CLIENT
+    Code_ResetCommandOperation, /**< Resetting controller command operation */ //FROM CLIENT
+    Code_DisableNotificationOperation, /**< Disabling notification operation */ //FROM CLIENT
+    Code_EnableNotificationOperation, /**< Enabling notification operation */ //FROM CLIENT
+    Code_ControllerUpdateOperation, /** Controller update or Controller error string operation with ControllerError or ControllerState */ //FROM SERVER
+    Code_NotificationOperation, /** Notification operation  with NotificationType & NotificationCode     */ //FROM SERVER
+    Code_SetSwitchAllOn,
+    Code_SetSwitchAllOff,
+};
+
+char* OperationCodeenumToString(ozw_OperationCode op) {
+    switch (op) {
+
+        case Code_None:
+            return "Code_None";
+        case Code_ControllerCommandOperation:
+            return "Code_ControllerCommandOperation";
+        case Code_SetValueOperation:
+            return "Code_SetValueOperation";
+        case Code_GetValueOperation:
+            return "Code_GetValueOperation";
+        case Code_CancelCommandOperation:
+            return "Code_CancelCommandOperation";
+        case Code_ResetCommandOperation:
+            return "Code_ResetCommandOperation";
+        case Code_DisableNotificationOperation:
+            return "Code_DisableNotificationOperation";
+        case Code_EnableNotificationOperation:
+            return "Code_EnableNotificationOperation";
+        case Code_ControllerUpdateOperation:
+            return "Code_ControllerUpdateOperation";
+        case Code_NotificationOperation:
+            return "Code_NotificationOperation";
+        case Code_SetSwitchAllOn:
+            return "Code_SetSwitchAllOn";
+        case Code_SetSwitchAllOff:
+            return "Code_SetSwitchAllOff";
+        default:
+            return "Unknown Operation";
+    }
+    return "Unknown Operation";
+}
+
+/*
+ * ValueGenre
+ */
+
+enum ozw_ValueGenre {
+    GenreBasic = 0,
+    GenreUser,
+    GenreConfig,
+    GenreSystem,
+    GenreCount,
+    GenreUnknown,
+};
+
+/*
+ * Value type
+ */
+
+enum ozw_ValueType {
+    Bool = 0,
+    Byte,
+    Decimal,
+    Int,
+    List,
+    Schedule,
+    String,
+    Short,
+    Button,
+    Raw,
+    TypeUnknown,
+};
+
+/** 
+ * Controller Commands.
+ * Commands to be used with the BeginControllerCommand method.
+ * \see Manager::BeginControllerCommand
+ */
+enum ozw_ControllerCommand {
+    ControllerCommand_None = 0, /**< No command. */
+    ControllerCommand_AddDevice, /**< Add a new device or controller to the Z-Wave network. */
+    ControllerCommand_CreateNewPrimary, /**< Add a new controller to the Z-Wave network. Used when old primary fails. Requires SUC. */
+    ControllerCommand_ReceiveConfiguration, /**< Receive Z-Wave network configuration information from another controller. */
+    ControllerCommand_RemoveDevice, /**< Remove a device or controller from the Z-Wave network. */
+    ControllerCommand_RemoveFailedNode, /**< Move a node to the controller's failed nodes list. This command will only work if the node cannot respond. */
+    ControllerCommand_HasNodeFailed, /**< Check whether a node is in the controller's failed nodes list. */
+    ControllerCommand_ReplaceFailedNode, /**< Replace a non-responding node with another. The node must be in the controller's list of failed nodes for this command to succeed. */
+    ControllerCommand_TransferPrimaryRole, /**< Make a different controller the primary. */
+    ControllerCommand_RequestNetworkUpdate, /**< Request network information from the SUC/SIS. */
+    ControllerCommand_RequestNodeNeighborUpdate, /**< Get a node to rebuild its neighbour list.  This method also does RequestNodeNeighbors */
+    ControllerCommand_AssignReturnRoute, /**< Assign a network return routes to a device. */
+    ControllerCommand_DeleteAllReturnRoutes, /**< Delete all return routes from a device. */
+    ControllerCommand_SendNodeInformation, /**< Send a node information frame */
+    ControllerCommand_ReplicationSend, /**< Send information from primary to secondary */
+    ControllerCommand_CreateButton, /**< Create an id that tracks handheld button presses */
+    ControllerCommand_DeleteButton /**< Delete id that tracks handheld button presses */
+};
+
+char* ControllerCommandenumToString(ozw_ControllerCommand cmd) {
+
+    switch (cmd) {
+        case ControllerCommand_None:
+            return "ControllerCommand_None";
+        case ControllerCommand_AddDevice:
+            return "ControllerCommand_AddDevice";
+        case ControllerCommand_CreateNewPrimary:
+            return "ControllerCommand_CreateNewPrimary";
+        case ControllerCommand_ReceiveConfiguration:
+            return "ControllerCommand_ReceiveConfiguration";
+        case ControllerCommand_RemoveDevice:
+            return "ControllerCommand_RemoveDevice";
+        case ControllerCommand_RemoveFailedNode:
+            return "ControllerCommand_RemoveFailedNode";
+        case ControllerCommand_HasNodeFailed:
+            return "ControllerCommand_HasNodeFailed";
+        case ControllerCommand_ReplaceFailedNode:
+            return "ControllerCommand_ReplaceFailedNode";
+        case ControllerCommand_TransferPrimaryRole:
+            return "ControllerCommand_TransferPrimaryRole";
+        case ControllerCommand_RequestNetworkUpdate:
+            return "ControllerCommand_RequestNetworkUpdate";
+        case ControllerCommand_AssignReturnRoute:
+            return "ControllerCommand_AssignReturnRoute";
+        case ControllerCommand_DeleteAllReturnRoutes:
+            return "ControllerCommand_DeleteAllReturnRoutes";
+        case ControllerCommand_SendNodeInformation:
+            return "ControllerCommand_SendNodeInformation";
+        case ControllerCommand_ReplicationSend:
+            return "ControllerCommand_ReplicationSend";
+        case ControllerCommand_CreateButton:
+            return "ControllerCommand_CreateButton";
+        case ControllerCommand_DeleteButton:
+            return "ControllerCommand_DeleteButton";
+        case ControllerCommand_RequestNodeNeighborUpdate:
+            return "ControllerCommand_RequestNodeNeighborUpdate";
+        default:
+            return "Unknown ControllerCommand";
+
+    }
+    return "Unknown ControllerCommand";
+
+}
+
+/** 
+ * Controller States.
+ * States reported via the callback handler passed into the BeginControllerCommand method.
+ * \see Manager::BeginControllerCommand
+ */
+enum ozw_ControllerState {
+    ControllerState_Normal = 0, /**< No command in progress. */
+    ControllerState_Starting, /**< The command is starting. */
+    ControllerState_Cancel, /**< The command was cancelled. */
+    ControllerState_Error, /**< Command invocation had error(s) and was aborted */
+    ControllerState_Waiting, /**< Controller is waiting for a user action. */
+    ControllerState_Sleeping, /**< Controller command is on a sleep queue wait for device. */
+    ControllerState_InProgress, /**< The controller is communicating with the other device to carry out the command. */
+    ControllerState_Completed, /**< The command has completed successfully. */
+    ControllerState_Failed, /**< The command has failed. */
+    ControllerState_NodeOK, /**< Used only with ControllerCommand_HasNodeFailed to indicate that the controller thinks the node is OK. */
+    ControllerState_NodeFailed /**< Used only with ControllerCommand_HasNodeFailed to indicate that the controller thinks the node has failed. */
+};
+
+/**
+ * Controller Errors
+ * Provide some more information about controller failures.
+ */
+enum ozw_ControllerError {
+    ControllerError_None = 0,
+    ControllerError_ButtonNotFound, /**< Button */
+    ControllerError_NodeNotFound, /**< Button */
+    ControllerError_NotBridge, /**< Button */
+    ControllerError_NotSUC, /**< CreateNewPrimary */
+    ControllerError_NotSecondary, /**< CreateNewPrimary */
+    ControllerError_NotPrimary, /**< RemoveFailedNode, AddNodeToNetwork */
+    ControllerError_IsPrimary, /**< ReceiveConfiguration */
+    ControllerError_NotFound, /**< RemoveFailedNode */
+    ControllerError_Busy, /**< RemoveFailedNode, RequestNetworkUpdate */
+    ControllerError_Failed, /**< RemoveFailedNode, RequestNetworkUpdate */
+    ControllerError_Disabled, /**< RequestNetworkUpdate error */
+    ControllerError_Overflow /**< RequestNetworkUpdate error */
+};
+
+/** 
+ * Notification types.
+ * Notifications of various Z-Wave events sent to the watchers
+ * registered with the Manager::AddWatcher method.
+ * \see Manager::AddWatcher
+ */
+enum ozw_NotificationType {
+    Type_ValueAdded = 0, /**< A new node value has been added to OpenZWave's list. These notifications occur after a node has been discovered, and details of its command classes have been received.  Each command class may generate one or more values depending on the complexity of the item being represented.  */
+    Type_ValueRemoved, /**< A node value has been removed from OpenZWave's list.  This only occurs when a node is removed. */
+    Type_ValueChanged, /**< A node value has been updated from the Z-Wave network and it is different from the previous value. */
+    Type_ValueRefreshed, /**< A node value has been updated from the Z-Wave network. */
+    Type_Group, /**< The associations for the node have changed. The application should rebuild any group information it holds about the node. */
+    Type_NodeNew, /**< A new node has been found (not already stored in zwcfg*.xml file) */
+    Type_NodeAdded, /**< A new node has been added to OpenZWave's list.  This may be due to a device being added to the Z-Wave network, or because the application is initializing itself. */
+    Type_NodeRemoved, /**< A node has been removed from OpenZWave's list.  This may be due to a device being removed from the Z-Wave network, or because the application is closing. */
+    Type_NodeProtocolInfo, /**< Basic node information has been receievd, such as whether the node is a listening device, a routing device and its baud rate and basic, generic and specific types. It is after this notification that you can call Manager::GetNodeType to obtain a label containing the device description. */
+    Type_NodeNaming, /**< One of the node names has changed (name, manufacturer, product). */
+    Type_NodeEvent, /**< A node has triggered an event.  This is commonly caused when a node sends a Basic_Set command to the controller.  The event value is stored in the notification. */
+    Type_PollingDisabled, /**< Polling of a node has been successfully turned off by a call to Manager::DisablePoll */
+    Type_PollingEnabled, /**< Polling of a node has been successfully turned on by a call to Manager::EnablePoll */
+    Type_SceneEvent, /**< Scene Activation Set received */
+    Type_CreateButton, /**< Handheld controller button event created */
+    Type_DeleteButton, /**< Handheld controller button event deleted */
+    Type_ButtonOn, /**< Handheld controller button on pressed event */
+    Type_ButtonOff, /**< Handheld controller button off pressed event */
+    Type_DriverReady, /**< A driver for a PC Z-Wave controller has been added and is ready to use.  The notification will contain the controller's Home ID, which is needed to call most of the Manager methods. */
+    Type_DriverFailed, /**< Driver failed to load */
+    Type_DriverReset, /**< All nodes and values for this driver have been removed.  This is sent instead of potentially hundreds of individual node and value notifications. */
+    Type_EssentialNodeQueriesComplete, /**< The queries on a node that are essential to its operation have been completed. The node can now handle incoming messages. */
+    Type_NodeQueriesComplete, /**< All the initialisation queries on a node have been completed. */
+    Type_AwakeNodesQueried, /**< All awake nodes have been queried, so client application can expected complete data for these nodes. */
+    Type_AllNodesQueriedSomeDead, /**< All nodes have been queried but some dead nodes found. */
+    Type_AllNodesQueried, /**< All nodes have been queried, so client application can expected complete data. */
+    Type_Notification /**< An error has occured that we need to report. */
+};
+
+char* NotificationenumToString(ozw_NotificationType v) {
+    switch (v) {
+        case Type_ValueAdded: /**< A new node value has been added to OpenZWave's list. These notifications occur after a node has been discovered, and details of its command classes have been received.  Each command class may generate one or more values depending on the complexity of the item being represented.  */
+            return "Type_ValueAdded";
+        case Type_ValueRemoved: /**< A node value has been removed from OpenZWave's list.  This only occurs when a node is removed. */
+            return "Type_ValueRemoved";
+        case Type_ValueChanged: /**< A node value has been updated from the Z-Wave network and it is different from the previous value. */
+            return "Type_ValueChanged";
+        case Type_ValueRefreshed: /**< A node value has been updated from the Z-Wave network. */
+            return "Type_ValueRefreshed";
+        case Type_Group: /**< The associations for the node have changed. The application should rebuild any group information it holds about the node. */
+            return "Type_Group";
+        case Type_NodeNew: /**< A new node has been found (not already stored in zwcfg*.xml file) */
+            return "Type_NodeNew";
+        case Type_NodeAdded: /**< A new node has been added to OpenZWave's list.  This may be due to a device being added to the Z-Wave network, or because the application is initializing itself. */
+            return "Type_NodeAdded";
+        case Type_NodeRemoved: /**< A node has been removed from OpenZWave's list.  This may be due to a device being removed from the Z-Wave network, or because the application is closing. */
+            return "Type_NodeRemoved";
+        case Type_NodeProtocolInfo: /**< Basic node information has been receievd, such as whether the node is a listening device, a routing device and its baud rate and basic, generic and specific types. It is after this notification that you can call Manager::GetNodeType to obtain a label containing the device description. */
+            return "Type_NodeProtocolInfo";
+        case Type_NodeNaming: /**< One of the node names has changed (name, manufacturer, product). */
+            return "Type_NodeNaming";
+        case Type_NodeEvent: /**< A node has triggered an event.  This is commonly caused when a node sends a Basic_Set command to the controller.  The event value is stored in the notification. */
+            return "Type_NodeEvent";
+        case Type_PollingDisabled: /**< Polling of a node has been successfully turned off by a call to Manager::DisablePoll */
+            return "Type_PollingDisabled";
+        case Type_PollingEnabled: /**< Polling of a node has been successfully turned on by a call to Manager::EnablePoll */
+            return "Type_PollingEnabled";
+        case Type_SceneEvent: /**< Scene Activation Set received */
+            return "Type_SceneEvent";
+        case Type_CreateButton: /**< Handheld controller button event created */
+            return "Type_CreateButton";
+        case Type_DeleteButton: /**< Handheld controller button event deleted */
+            return "Type_DeleteButton";
+        case Type_ButtonOn: /**< Handheld controller button on pressed event */
+            return "Type_ButtonOn";
+        case Type_ButtonOff: /**< Handheld controller button off pressed event */
+            return "Type_ButtonOff";
+        case Type_DriverReady: /**< A driver for a PC Z-Wave controller has been added and is ready to use.  The notification will contain the controller's Home ID, which is needed to call most of the Manager methods. */
+            return "Type_DriverReady";
+        case Type_DriverFailed: /**< Driver failed to load */
+            return "Type_DriverFailed";
+        case Type_DriverReset: /**< All nodes and values for this driver have been removed.  This is sent instead of potentially hundreds of individual node and value notifications. */
+            return "Type_DriverReset";
+        case Type_EssentialNodeQueriesComplete: /**< The queries on a node that are essential to its operation have been completed. The node can now handle incoming messages. */
+            return "Type_EssentialNodeQueriesComplete";
+        case Type_NodeQueriesComplete: /**< All the initialisation queries on a node have been completed. */
+            return "Type_NodeQueriesComplete";
+        case Type_AwakeNodesQueried: /**< All awake nodes have been queried, so client application can expected complete data for these nodes. */
+            return "Type_AwakeNodesQueried";
+        case Type_AllNodesQueriedSomeDead: /**< All nodes have been queried but some dead nodes found. */
+            return "Type_AllNodesQueriedSomeDead";
+        case Type_AllNodesQueried: /**< All nodes have been queried, so client application can expected complete data. */
+            return "Type_AllNodesQueried";
+        case Type_Notification:
+            return "Type_Notification";
+        default:
+            return "Unknown Notification";
+
+    }
+    return "Unknown Notification";
+
+
+}
+
+/** 
+ * Notification codes.
+ * Notifications of the type Type_Notification convey some
+ * extra information defined here.
+ */
+enum ozw_NotificationCode {
+    Code_MsgComplete = 0, /**< Completed messages */
+    Code_Timeout, /**< Messages that timeout will send a Notification with this code. */
+    Code_NoOperation, /**< Report on NoOperation message sent completion  */
+    Code_Awake, /**< Report when a sleeping node wakes up */
+    Code_Sleep, /**< Report when a node goes to sleep */
+    Code_Dead, /**< Report when a node is presumed dead */
+    Code_Alive /**< Report when a node is revived */
+};
+
+/* controller error to string*/
+
+const char *controllerStateStr(ozw_ControllerState cs) {
+    switch (cs) {
+        case ControllerState_Normal:
+            return ": no command in progress.";
+        case ControllerState_Starting:
+            return ": starting controller command.";
+        case ControllerState_Cancel:
+            return ": command was cancelled.";
+        case ControllerState_Error:
+            return ": command returned an error: ";
+        case ControllerState_Sleeping:
+            return ": device went to sleep.";
+        case ControllerState_Waiting:
+            return ": waiting for a user action.";
+        case ControllerState_InProgress:
+            return ": communicating with the other device.";
+        case ControllerState_Completed:
+            return ": command has completed successfully.";
+        case ControllerState_Failed:
+            return ": command has failed.";
+        case ControllerState_NodeOK:
+            return ": the node is OK.";
+        case ControllerState_NodeFailed:
+            return ": the node has failed.";
+        default:
+            break;
+    }
+    return ": unknown respose.";
+}
+
+/* controller error to string*/
+
+const char *controllerErrorStr(ozw_ControllerError err) {
+    switch (err) {
+        case ControllerError_None:
+            return "None";
+        case ControllerError_ButtonNotFound:
+            return "Button Not Found";
+        case ControllerError_NodeNotFound:
+            return "Node Not Found";
+        case ControllerError_NotBridge:
+            return "Not a Bridge";
+        case ControllerError_NotPrimary:
+            return "Not Primary Controller";
+        case ControllerError_IsPrimary:
+            return "Is Primary Controller";
+        case ControllerError_NotSUC:
+            return "Not Static Update Controller";
+        case ControllerError_NotSecondary:
+            return "Not Secondary Controller";
+        case ControllerError_NotFound:
+            return "Not Found";
+        case ControllerError_Busy:
+            return "Controller Busy";
+        case ControllerError_Failed:
+            return "Failed";
+        case ControllerError_Disabled:
+            return "Disabled";
+        case ControllerError_Overflow:
+            return "Overflow";
+        default:
+            return "Unknown error";
+    }
+}
+
+/*
+ * command class id to command class name
+ */
+
+const char *cclassStr(unsigned char cc) {
+    switch (cc) {
+        default:
+        case 0x00:
+            return "NO OPERATION";
+        case 0x20:
+            return "BASIC";
+        case 0x21:
+            return "CONTROLLER REPLICATION";
+        case 0x22:
+            return "APPLICATION STATUS";
+        case 0x23:
+            return "ZIP SERVICES";
+        case 0x24:
+            return "ZIP SERVER";
+        case 0x25:
+            return "SWITCH BINARY";
+        case 0x26:
+            return "SWITCH MULTILEVEL";
+        case 0x27:
+            return "SWITCH ALL";
+        case 0x28:
+            return "SWITCH TOGGLE BINARY";
+        case 0x29:
+            return "SWITCH TOGGLE MULTILEVEL";
+        case 0x2A:
+            return "CHIMNEY FAN";
+        case 0x2B:
+            return "SCENE ACTIVATION";
+        case 0x2C:
+            return "SCENE ACTUATOR CONF";
+        case 0x2D:
+            return "SCENE CONTROLLER CONF";
+        case 0x2E:
+            return "ZIP CLIENT";
+        case 0x2F:
+            return "ZIP ADV SERVICES";
+        case 0x30:
+            return "SENSOR BINARY";
+        case 0x31:
+            return "SENSOR MULTILEVEL";
+        case 0x32:
+            return "METER";
+        case 0x33:
+            return "ZIP ADV SERVER";
+        case 0x34:
+            return "ZIP ADV CLIENT";
+        case 0x35:
+            return "METER PULSE";
+        case 0x38:
+            return "THERMOSTAT HEATING";
+        case 0x40:
+            return "THERMOSTAT MODE";
+        case 0x42:
+            return "THERMOSTAT OPERATING STATE";
+        case 0x43:
+            return "THERMOSTAT SETPOINT";
+        case 0x44:
+            return "THERMOSTAT FAN MODE";
+        case 0x45:
+            return "THERMOSTAT FAN STATE";
+        case 0x46:
+            return "CLIMATE CONTROL SCHEDULE";
+        case 0x47:
+            return "THERMOSTAT SETBACK";
+        case 0x4C:
+            return "DOOR LOCK LOGGING";
+        case 0x4E:
+            return "SCHEDULE ENTRY LOCK";
+        case 0x50:
+            return "BASIC WINDOW COVERING";
+        case 0x51:
+            return "MTP WINDOW COVERING";
+        case 0x60:
+            return "MULTI INSTANCE";
+        case 0x62:
+            return "DOOR LOCK";
+        case 0x63:
+            return "USER CODE";
+        case 0x70:
+            return "CONFIGURATION";
+        case 0x71:
+            return "ALARM";
+        case 0x72:
+            return "MANUFACTURER SPECIFIC";
+        case 0x73:
+            return "POWERLEVEL";
+        case 0x75:
+            return "PROTECTION";
+        case 0x76:
+            return "LOCK";
+        case 0x77:
+            return "NODE NAMING";
+        case 0x7A:
+            return "FIRMWARE UPDATE MD";
+        case 0x7B:
+            return "GROUPING NAME";
+        case 0x7C:
+            return "REMOTE ASSOCIATION ACTIVATE";
+        case 0x7D:
+            return "REMOTE ASSOCIATION";
+        case 0x80:
+            return "BATTERY";
+        case 0x81:
+            return "CLOCK";
+        case 0x82:
+            return "HAIL";
+        case 0x84:
+            return "WAKE UP";
+        case 0x85:
+            return "ASSOCIATION";
+        case 0x86:
+            return "VERSION";
+        case 0x87:
+            return "INDICATOR";
+        case 0x88:
+            return "PROPRIETARY";
+        case 0x89:
+            return "LANGUAGE";
+        case 0x8A:
+            return "TIME";
+        case 0x8B:
+            return "TIME PARAMETERS";
+        case 0x8C:
+            return "GEOGRAPHIC LOCATION";
+        case 0x8D:
+            return "COMPOSITE";
+        case 0x8E:
+            return "MULTI INSTANCE ASSOCIATION";
+        case 0x8F:
+            return "MULTI CMD";
+        case 0x90:
+            return "ENERGY PRODUCTION";
+        case 0x91:
+            return "MANUFACTURER PROPRIETARY";
+        case 0x92:
+            return "SCREEN MD";
+        case 0x93:
+            return "SCREEN ATTRIBUTES";
+        case 0x94:
+            return "SIMPLE AV CONTROL";
+        case 0x95:
+            return "AV CONTENT DIRECTORY MD";
+        case 0x96:
+            return "AV RENDERER STATUS";
+        case 0x97:
+            return "AV CONTENT SEARCH MD";
+        case 0x98:
+            return "SECURITY";
+        case 0x99:
+            return "AV TAGGING MD";
+        case 0x9A:
+            return "IP CONFIGURATION";
+        case 0x9B:
+            return "ASSOCIATION COMMAND CONFIGURATION";
+        case 0x9C:
+            return "SENSOR ALARM";
+        case 0x9D:
+            return "SILENCE ALARM";
+        case 0x9E:
+            return "SENSOR CONFIGURATION";
+        case 0xEF:
+            return "MARK";
+        case 0xF0:
+            return "NON INTEROPERABLE";
+    }
+    return "UNKNOWN";
+}
+
+/*
+ * command class name to command class id.
+ */
+
+
+unsigned char cclassNum(char const *str) {
+    if (strcmp(str, "NO OPERATION") == 0)
+        return 0x00;
+    else if (strcmp(str, "BASIC") == 0)
+        return 0x20;
+    else if (strcmp(str, "CONTROLLER REPLICATION") == 0)
+        return 0x21;
+    else if (strcmp(str, "APPLICATION STATUS") == 0)
+        return 0x22;
+    else if (strcmp(str, "ZIP SERVICES") == 0)
+        return 0x23;
+    else if (strcmp(str, "ZIP SERVER") == 0)
+        return 0x24;
+    else if (strcmp(str, "SWITCH BINARY") == 0)
+        return 0x25;
+    else if (strcmp(str, "SWITCH MULTILEVEL") == 0)
+        return 0x26;
+    else if (strcmp(str, "SWITCH ALL") == 0)
+        return 0x27;
+    else if (strcmp(str, "SWITCH TOGGLE BINARY") == 0)
+        return 0x28;
+    else if (strcmp(str, "SWITCH TOGGLE MULTILEVEL") == 0)
+        return 0x29;
+    else if (strcmp(str, "CHIMNEY FAN") == 0)
+        return 0x2A;
+    else if (strcmp(str, "SCENE ACTIVATION") == 0)
+        return 0x2B;
+    else if (strcmp(str, "SCENE ACTUATOR CONF") == 0)
+        return 0x2C;
+    else if (strcmp(str, "SCENE CONTROLLER CONF") == 0)
+        return 0x2D;
+    else if (strcmp(str, "ZIP CLIENT") == 0)
+        return 0x2E;
+    else if (strcmp(str, "ZIP ADV SERVICES") == 0)
+        return 0x2F;
+    else if (strcmp(str, "SENSOR BINARY") == 0)
+        return 0x30;
+    else if (strcmp(str, "SENSOR MULTILEVEL") == 0)
+        return 0x31;
+    else if (strcmp(str, "METER") == 0)
+        return 0x32;
+    else if (strcmp(str, "ZIP ADV SERVER") == 0)
+        return 0x33;
+    else if (strcmp(str, "ZIP ADV CLIENT") == 0)
+        return 0x34;
+    else if (strcmp(str, "METER PULSE") == 0)
+        return 0x35;
+    else if (strcmp(str, "THERMOSTAT HEATING") == 0)
+        return 0x38;
+    else if (strcmp(str, "THERMOSTAT MODE") == 0)
+        return 0x40;
+    else if (strcmp(str, "THERMOSTAT OPERATING STATE") == 0)
+        return 0x42;
+    else if (strcmp(str, "THERMOSTAT SETPOINT") == 0)
+        return 0x43;
+    else if (strcmp(str, "THERMOSTAT FAN MODE") == 0)
+        return 0x44;
+    else if (strcmp(str, "THERMOSTAT FAN STATE") == 0)
+        return 0x45;
+    else if (strcmp(str, "CLIMATE CONTROL SCHEDULE") == 0)
+        return 0x46;
+    else if (strcmp(str, "THERMOSTAT SETBACK") == 0)
+        return 0x47;
+    else if (strcmp(str, "DOOR LOCK LOGGING") == 0)
+        return 0x4C;
+    else if (strcmp(str, "SCHEDULE ENTRY LOCK") == 0)
+        return 0x4E;
+    else if (strcmp(str, "BASIC WINDOW COVERING") == 0)
+        return 0x50;
+    else if (strcmp(str, "MTP WINDOW COVERING") == 0)
+        return 0x51;
+    else if (strcmp(str, "MULTI INSTANCE") == 0)
+        return 0x60;
+    else if (strcmp(str, "DOOR LOCK") == 0)
+        return 0x62;
+    else if (strcmp(str, "USER CODE") == 0)
+        return 0x63;
+    else if (strcmp(str, "CONFIGURATION") == 0)
+        return 0x70;
+    else if (strcmp(str, "ALARM") == 0)
+        return 0x71;
+    else if (strcmp(str, "MANUFACTURER SPECIFIC") == 0)
+        return 0x72;
+    else if (strcmp(str, "POWERLEVEL") == 0)
+        return 0x73;
+    else if (strcmp(str, "PROTECTION") == 0)
+        return 0x75;
+    else if (strcmp(str, "LOCK") == 0)
+        return 0x76;
+    else if (strcmp(str, "NODE NAMING") == 0)
+        return 0x77;
+    else if (strcmp(str, "FIRMWARE UPDATE MD") == 0)
+        return 0x7A;
+    else if (strcmp(str, "GROUPING NAME") == 0)
+        return 0x7B;
+    else if (strcmp(str, "REMOTE ASSOCIATION ACTIVATE") == 0)
+        return 0x7C;
+    else if (strcmp(str, "REMOTE ASSOCIATION") == 0)
+        return 0x7D;
+    else if (strcmp(str, "BATTERY") == 0)
+        return 0x80;
+    else if (strcmp(str, "CLOCK") == 0)
+        return 0x81;
+    else if (strcmp(str, "HAIL") == 0)
+        return 0x82;
+    else if (strcmp(str, "WAKE UP") == 0)
+        return 0x84;
+    else if (strcmp(str, "ASSOCIATION") == 0)
+        return 0x85;
+    else if (strcmp(str, "VERSION") == 0)
+        return 0x86;
+    else if (strcmp(str, "INDICATOR") == 0)
+        return 0x87;
+    else if (strcmp(str, "PROPRIETARY") == 0)
+        return 0x88;
+    else if (strcmp(str, "LANGUAGE") == 0)
+        return 0x89;
+    else if (strcmp(str, "TIME") == 0)
+        return 0x8A;
+    else if (strcmp(str, "TIME PARAMETERS") == 0)
+        return 0x8B;
+    else if (strcmp(str, "GEOGRAPHIC LOCATION") == 0)
+        return 0x8C;
+    else if (strcmp(str, "COMPOSITE") == 0)
+        return 0x8D;
+    else if (strcmp(str, "MULTI INSTANCE ASSOCIATION") == 0)
+        return 0x8E;
+    else if (strcmp(str, "MULTI CMD") == 0)
+        return 0x8F;
+    else if (strcmp(str, "ENERGY PRODUCTION") == 0)
+        return 0x90;
+    else if (strcmp(str, "MANUFACTURER PROPRIETARY") == 0)
+        return 0x91;
+    else if (strcmp(str, "SCREEN MD") == 0)
+        return 0x92;
+    else if (strcmp(str, "SCREEN ATTRIBUTES") == 0)
+        return 0x93;
+    else if (strcmp(str, "SIMPLE AV CONTROL") == 0)
+        return 0x94;
+    else if (strcmp(str, "AV CONTENT DIRECTORY MD") == 0)
+        return 0x95;
+    else if (strcmp(str, "AV RENDERER STATUS") == 0)
+        return 0x96;
+    else if (strcmp(str, "AV CONTENT SEARCH MD") == 0)
+        return 0x97;
+    else if (strcmp(str, "SECURITY") == 0)
+        return 0x98;
+    else if (strcmp(str, "AV TAGGING MD") == 0)
+        return 0x99;
+    else if (strcmp(str, "IP CONFIGURATION") == 0)
+        return 0x9A;
+    else if (strcmp(str, "ASSOCIATION COMMAND CONFIGURATION") == 0)
+        return 0x9B;
+    else if (strcmp(str, "SENSOR ALARM") == 0)
+        return 0x9C;
+    else if (strcmp(str, "SILENCE ALARM") == 0)
+        return 0x9D;
+    else if (strcmp(str, "SENSOR CONFIGURATION") == 0)
+        return 0x9E;
+    else if (strcmp(str, "MARK") == 0)
+        return 0xEF;
+    else if (strcmp(str, "NON INTEROPERABLE") == 0)
+        return 0xF0;
+    else
+        return 0xFF;
+}
+
+/*
+ * ozw_ValueGenre enum to string
+ */
+
+const char *enumValueGenreStr(enum ozw_ValueGenre vg) {
+    switch (vg) {
+        case GenreBasic:
+            return "basic";
+        case GenreUser:
+            return "user";
+        case GenreConfig:
+            return "config";
+        case GenreSystem:
+            return "system";
+        case GenreCount:
+            return "count";
+        case GenreUnknown:
+            break;
+    }
+    return "unknown";
+}
+
+/*
+ * ozw_ValueType enum to string
+ */
+
+
+const char *valueTypeStr(enum ozw_ValueType vt) {
+    switch (vt) {
+        case Bool:
+            return "bool";
+        case Byte:
+            return "byte";
+        case Decimal:
+            return "decimal";
+        case Int:
+            return "int";
+        case List:
+            return "list";
+        case Schedule:
+            return "schedule";
+        case String:
+            return "string";
+        case Short:
+            return "short";
+        case Button:
+            return "button";
+        case Raw:
+            return "raw";
+        case TypeUnknown:
+            break;
+    }
+    return "unknown";
+}
+
+/*
+ * Z-Wave Data Packet
+ */
+typedef struct {
+    unsigned int HomeID;
+    unsigned char NodeID;
+    unsigned char CommandClassId;
+    unsigned char CommadClassIndex;
+    unsigned char SceneId;
+    unsigned char GroupId;
+    unsigned char Instance;
+    unsigned char ButtonId;
+    bool AllowNotification;
+    char Name[40];
+    char DeviceType[40];
+    char Value[20];
+    enum ozw_OperationCode OperationCode;
+    enum ozw_ValueGenre ValueGenre;
+    enum ozw_ValueType ValueType;
+    enum ozw_NotificationType NotificationType;
+    enum ozw_NotificationCode NotificationCode;
+    enum ozw_ControllerCommand ControllerCommand;
+    enum ozw_ControllerState ControllerState;
+    enum ozw_ControllerError ControllerError;
+} OZW_DATA_PACKET;
+
+OZW_DATA_PACKET OZWSendingPacket, OZWReceivedPacket;
+
+#endif /*OZW*/
+
+#ifdef ZIGBEE
+
+enum ZigbeeIncomingMessageType {
+    /** Unicast. */
+    ZIGBEE_INCOMING_UNICAST,
+    /** Unicast reply. */
+    ZIGBEE_INCOMING_UNICAST_REPLY,
+    /** Multicast. */
+    ZIGBEE_INCOMING_MULTICAST,
+    /** Multicast sent by the local device. */
+    ZIGBEE_INCOMING_MULTICAST_LOOPBACK,
+    /** Broadcast. */
+    ZIGBEE_INCOMING_BROADCAST,
+    /** Broadcast sent by the local device. */
+    ZIGBEE_INCOMING_BROADCAST_LOOPBACK
+};
+
+enum ZigbeeApsOption {
+    /** No options. */
+    ZIGBEE_APS_OPTION_NONE = 0x0000,
+    /** This signs the application layer message body (APS Frame not included)
+        and appends the ECDSA signature to the end of the message.  Needed by
+        Smart Energy applications.  This requires the CBKE and ECC libraries.
+        The ::emberDsaSignHandler() function is called after DSA signing
+        is complete but before the message has been sent by the APS layer.
+        Note that when passing a buffer to the stack for DSA signing, the final
+        byte in the buffer has special significance as an indicator of how many
+        leading bytes should be ignored for signature purposes.  Refer to API
+        documentation of emberDsaSign() or the dsaSign EZSP command for further
+        details about this requirement.
+     */
+    ZIGBEE_APS_OPTION_DSA_SIGN = 0x0010,
+    /** Send the message using APS Encryption, using the Link Key shared
+        with the destination node to encrypt the data at the APS Level. */
+    ZIGBEE_APS_OPTION_ENCRYPTION = 0x0020,
+    /** Resend the message using the APS retry mechanism.  In the mesh stack,
+        this option and the enable route discovery option must be enabled for 
+        an existing route to be repaired automatically. */
+    ZIGBEE_APS_OPTION_RETRY = 0x0040,
+    /** Send the message with the NWK 'enable route discovery' flag, which
+        causes a route discovery to be initiated if no route to the destination
+        is known.  Note that in the mesh stack, this option and the APS retry 
+        option must be enabled an existing route to be repaired 
+        automatically. */
+    ZIGBEE_APS_OPTION_ENABLE_ROUTE_DISCOVERY = 0x0100,
+    /** Send the message with the NWK 'force route discovery' flag, which causes
+        a route discovery to be initiated even if one is known. */
+    ZIGBEE_APS_OPTION_FORCE_ROUTE_DISCOVERY = 0x0200,
+    /** Include the source EUI64 in the network frame. */
+    ZIGBEE_APS_OPTION_SOURCE_EUI64 = 0x0400,
+    /** Include the destination EUI64 in the network frame. */
+    ZIGBEE_APS_OPTION_DESTINATION_EUI64 = 0x0800,
+    /** Send a ZDO request to discover the node ID of the destination, if it is
+        not already know. */
+    ZIGBEE_APS_OPTION_ENABLE_ADDRESS_DISCOVERY = 0x1000,
+    /** This message is being sent in response to a call to
+        ::emberPollHandler().  It causes the message to be sent
+        immediately instead of being queued up until the next poll from the
+        (end device) destination. */
+    ZIGBEE_APS_OPTION_POLL_RESPONSE = 0x2000,
+    /** This incoming message is a valid ZDO request and the application 
+     * is responsible for sending a ZDO response. This flag is used only
+     * within emberIncomingMessageHandler() when 
+     * EMBER_APPLICATION_RECEIVES_UNSUPPORTED_ZDO_REQUESTS is defined. */
+    ZIGBEE_APS_OPTION_ZDO_RESPONSE_REQUIRED = 0x4000,
+    /** This message is part of a fragmented message.  This option may only
+        be set for unicasts.  The groupId field gives the index of this
+        fragment in the low-order byte.  If the low-order byte is zero this
+        is the first fragment and the high-order byte contains the number
+        of fragments in the message. */
+    ZIGBEE_APS_OPTION_FRAGMENT = SIGNED_ENUM 0x8000
+};
+
+typedef struct {
+    /** The application profile ID that describes the format of the message. */
+    int16u profileId;
+    /** The cluster ID for this message. */
+    int16u clusterId;
+    /** The source endpoint. */
+    int8u sourceEndpoint;
+    /** The destination endpoint. */
+    int8u destinationEndpoint;
+    /** A bitmask of options from the enumeration above. */
+    enum ZigbeeApsOption options;
+    /** The group ID for this message, if it is multicast mode. */
+    int16u groupId;
+    /** The sequence number. */
+    int8u sequence;
+} ZigbeeApsFrame;
+
+typedef struct {
+    /**
+     * The type of the incoming message
+     */
+    enum ZigbeeIncomingMessageType type;
+    /**
+     * Aps frame for the incoming message
+     */
+    ZigbeeApsFrame apsFrame;
+    /**
+     * The message copied into a flat buffer
+     */
+    int8u message[20];
+    /**
+     * Length of the incoming message
+     */
+    int16u msgLen;
+    /**
+     * Two byte node id of the sending node.
+     */
+    int16u source;
+    /**
+     * Link quality from the node that last relayed
+     * the message.
+     */
+    int8u lastHopLqi;
+    /**
+     * The energy level (in units of dBm) observed during the reception.
+     */
+    int8s lastHopRssi;
+    /**
+     * The index of a binding that matches the message 
+     * or 0xFF if there is no matching binding.
+     */
+    int8u bindingTableIndex;
+    /**
+     * The index of the entry in the address table 
+     * that matches the sender of the message or 0xFF 
+     * if there is no matching entry.
+     */
+    int8u addressTableIndex;
+    /**
+     * The index of the network on which this message was received.
+     */
+    int8u networkIndex;
+} ZigbeeIncomingMessage;
+
+/*
+ * Zigbee Data Packet
+ */
+typedef struct {
+    char Command[80]; //sent from client to zigbee_server
+    char CallbackFunctionName[60];
+    int8u EUI64[8];
+    ZigbeeIncomingMessage msg;
+
+} ZIGBEE_DATA_PACKET;
+
+ZIGBEE_DATA_PACKET ZigbeeSendingPacket, ZigbeeReceivedPacket;
+
+
+#endif
+
+#endif	/* DATA_PACKET_H */
+

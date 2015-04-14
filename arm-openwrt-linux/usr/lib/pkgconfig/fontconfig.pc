@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Fontconfig
+Description: Font configuration and customization library
+Version: 2.6.0
+Libs: -L${libdir} -lfontconfig
+Libs.private: -lexpat -L/home/buildserver/coconut/openwrt-2.4.2011-trunk/staging_dir/target-arm_uClibc-0.9.32_eabi/usr/lib -lfreetype -lz
+Cflags: -I${includedir}

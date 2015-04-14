@@ -11,6 +11,8 @@
  * with the result of the update operation {success: true/false}.
  */
 
+var port = 1337;
+
 function S4() {
   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 }
@@ -18,6 +20,7 @@ function S4() {
 function uid() {
   return (S4()+S4()+S4());
 }
+
 var CollectionWS = NestedCollection.extend({
 
   save:function(collectionData){
@@ -27,16 +30,17 @@ var CollectionWS = NestedCollection.extend({
   },
 
   sync: function(method, collection, options) {
-    var socket = collection.getSocket();
+    var socket = collection.getSocket(collection, options);
     switch (method) {
       case "read":
         // Return an array  of models for this collection
         var tid = uid();
         socket.on("fetch", function(response) {
           // console.log(tid, response);
+          console.log(response.data)
           if (response.success) {
             options.success(collection, response.data, options);
-          }
+          } 
         });
         socket.emit("fetch", {tid: tid});
         break;
@@ -45,17 +49,23 @@ var CollectionWS = NestedCollection.extend({
     }
   },
 
-  getSocket: function() {
+  getSocket: function(collection, options) {
+    console.log(this.url)
     if (!this._socketio) {
-      //Having all that mess in the server file act as like
-      //a fake socket for when we actualy implement it
-      io = new fakeSocket()
-      this._socketio = io.connect(this.url);
+      this._socketio = io(':'+port+'/'+this.url,{
+        reconnection: true
+      })
       var obj = this;
-      this._socketio.on("update", function(data) {
+      this._socketio.on("update", function(response) {
         // data contains an array of model objects to be updated
-        obj.update(data);
-        
+        console.log('arrived')
+        obj.update(response);
+      });
+      this._socketio.on("connect_error", function(response) {
+        // failure to reach backend
+        collection.wsFail = true;
+        console.log(collection)
+        options.failure(collection, response.data, options);
       });
     }
     return this._socketio;
@@ -66,6 +76,8 @@ var ModelWS = NestedModel.extend({
   
   sync: function(method, model, options) {
     var socket = model.getSocket();
+    console.log(model.url)
+    console.log(socket)
     switch (method) {
       case "update":
         // send local changes to the server

@@ -104,8 +104,8 @@ Luci.prototype.loadData = function(data){
 }
 
 Luci.prototype.loadJson = function(json){
-
 	var data = this.loadData(json)
 	return JSON.parse(data);
-  
 }
+
+window.Luci = new Luci()

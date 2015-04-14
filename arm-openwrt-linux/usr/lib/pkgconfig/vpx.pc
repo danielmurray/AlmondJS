@@ -1,0 +1,13 @@
+# pkg-config file from libvpx v0.9.7-p1
+prefix=/home/buildserver/coconut/openwrt-2.4.2011-trunk/tmp/stage-libvpx/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: vpx
+Description: WebM Project VPx codec implementation
+Version: 0.9.7
+Requires:
+Conflicts:
+Libs: -L${libdir} -lvpx
+Cflags: -I${includedir}

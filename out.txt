@@ -1,0 +1,122 @@
+28c28
+<         rootDir: 'rootDir'
+---
+>         rootDir: 'almondRootDir'
+36,44d35
+< 	this.ignoreFiles = [
+< 		'node_modules',
+< 		'.coveragerc',
+< 		'.git',
+< 		'.gitignore',
+< 		'.travis.yml',
+< 		'.DS_Store'
+< 	]
+< 
+56,64c47
+< 	var result = syncExec("ping -c 1 " + this.ip + " | grep icmp* | wc -l", callbackWrapper);
+< 
+< 	var stdout = Math.round(result.stdout.trim())
+< 	var stderr = result.stderr
+< 
+< 	return {
+< 		stderr: stderr,
+< 		stdout: stdout
+< 	}
+---
+> 	exec("ping -c 1 " + this.ip + " | grep icmp* | wc -l", callbackWrapper);
+72,74d54
+<     	if( this.ignoreFiles.indexOf(files[i]) != -1 ) {
+<     		continue;    		
+<     	}
+102,105c82,83
+< 
+< 		if( output.stderr.indexOf("Permission denied") > -1 ){
+< 			throw output.stderr;
+< 		}else if( output.stderr ){
+---
+> 		
+> 		if( output.stderr ){
+118c96
+< 
+---
+> 	
+132,139d109
+< 	return syncExec(command, true);
+< 
+< }
+< 
+< 
+< 
+< AlmondFS.prototype.getRemoteFilePath = function(localFilePath){
+< 	var filePath = localFilePath.replace(this.rootDir, '')
+141,145c111
+< 	if(this.user == 'root'){
+< 		return filePath
+< 	}else{
+< 		return '/home/'+ this.user + filePath
+< 	}
+---
+> 	return syncExec(command, true);
+151c117
+< 	var remoteFilePath = this.getRemoteFilePath(localFilePath)
+---
+> 	var remoteFilePath = localFilePath.replace(this.rootDir, '');
+191,197c157,163
+< 	var result = this.ping()
+< 
+< 	if(result.stdout != 0){
+< 		that.updateFiles()
+< 	}else{
+< 		console.log('No Almond Detected...')
+< 		console.log('Check your WiFi Connection and Almond IP')
+---
+> 	var callbackWrapper = function(success,error){
+> 		if(success){
+> 			that.updateFiles()
+> 		}else{
+> 			console.log('No Almond+ Detected...')
+> 			console.log('Check your WiFi Connection and Almond IP')
+> 		}
+199a166
+> 	this.ping(callbackWrapper)
+205,216c172,182
+< 	var result = this.ping()
+< 
+< 	if(result.stdout != 0){
+< 		console.log('-------File Listener Fully Armed & Operational-------')
+< 		console.log(that.rootDir)
+< 		watchTree(that.rootDir, function (event) {
+< 			var localFilePath = event.name
+< 			that.updateFile(localFilePath)
+< 		});
+< 	}else{
+< 		console.log('No Almond+ Detected...')
+< 		console.log('Check your WiFi Connection and Almond IP')
+---
+> 	var callbackWrapper = function(success,error){
+> 		if(success){
+> 			console.log('-------File Listener Fully Armed & Operational-------')
+> 			watchTree(that.rootDir, function (event) {
+> 				var localFilePath = event.name
+> 				that.updateFile(localFilePath)
+> 			});
+> 		}else{
+> 			console.log('No Almond+ Detected...')
+> 			console.log('Check your WiFi Connection and Almond IP')
+> 		}
+219c185
+< 	
+---
+> 	this.ping(callbackWrapper)
+223,224c189,190
+< var Almond = new AlmondFS({
+< 	ip: '10.10.10.127',
+---
+> var almond = new AlmondFS({
+> 	ip: '10.10.10.121',
+230,231c196,197
+< // Almond.connect()
+< Almond.sync()
+---
+> almond.connect()
+> almond.sync()

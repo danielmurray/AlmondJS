@@ -1,13 +1,43 @@
 .deviceWrapper{
+    position: relative;
     color:black;
     height:100%;
     width: 100%;
 }
 
 .deviceTop{
-    height: 158px;
+    position: relative;
+    height: 100%;
     width: 100%;
 }
+
+.ellipsesWrapper{
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+
+  height: 70px;
+  width: 70px;
+}
+
+.ellipsesWrapper:hover{
+    cursor: pointer;
+}
+
+.ellipses{
+    margin: 22px 0 0 35px;
+}
+
+.ellipsis{
+    background-color: whitesmoke;
+    
+    height: 6px;
+    width: 6px;
+    border-radius:10px;
+
+    margin-bottom: 3px;
+}
+
 
 .deviceBottom{
     height: 336px;
@@ -17,8 +47,8 @@
 .deviceIconWrapper{
     position: relative;
     float:left;
-    height:158px;
-    width:160px;
+    height:100%;
+    width:100%;
 }
 
 .displayValues{

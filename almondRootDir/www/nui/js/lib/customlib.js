@@ -1,3 +1,25 @@
+var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+
+window.MOBILE = isMobile.any();
 
 var arrayFind = function(array, callback, args){
   for (var i=0; i<array.length; i++) {
@@ -370,4 +392,22 @@ var arrayMax = function(array, func){
   }
 
   return array[largestIndex]
+}
+
+var jsonToArray = function(json){
+  //turns a json object into an array of 
+  //json object, key -> serialized json id
+
+  var array = [];
+
+  for(var key in json){
+    var arrayJson = {
+      id: key,
+      value: json[key]
+    }
+
+    array.push(arrayJson)
+  }
+
+  return array
 }
